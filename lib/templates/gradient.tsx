@@ -101,7 +101,7 @@ export function GradientTemplate({
           {/* Category badge */}
           <div
             style={{
-              display: 'inline-flex',
+              display: 'flex',
               width: 'fit-content',
               background: 'rgba(255,255,255,0.15)',
               borderRadius: 100,
