@@ -1,6 +1,6 @@
 import { ImageResponse } from '@vercel/og';
 import { NextRequest, NextResponse } from 'next/server';
-import { extractBearerToken, checkAndIncrementUsage } from '@/lib/usage';
+// Auth imports loaded dynamically to avoid better-sqlite3 on Vercel edge
 import {
   BlogTemplate,
   ProductTemplate,
@@ -73,7 +73,9 @@ async function handleRequest(request: NextRequest, bodyData?: Record<string, str
   
   let plan = 'free';
   if (!isDemo) {
-    // Auth check
+    // Dynamic import to avoid loading better-sqlite3 on Vercel serverless
+    const { extractBearerToken, checkAndIncrementUsage } = await import('@/lib/usage');
+    
     const authHeader = request.headers.get('Authorization');
     const token = extractBearerToken(authHeader);
 
