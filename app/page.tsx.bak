@@ -5,49 +5,47 @@ import { useState } from "react";
 const TEMPLATES = ["blog", "product", "social", "minimal", "gradient", "changelog", "docs", "tweet", "profile", "event", "podcast", "pricing", "newsletter", "comparison", "announcement"] as const;
 type Template = (typeof TEMPLATES)[number];
 
-function getCodeExamples(template: Template, title: string, description: string) {
-  return {
-    curl: `curl -X POST https://ogpix-mu.vercel.app/api/generate \\
+const CODE_EXAMPLES = {
+  curl: `curl -X POST https://ogpix-mu.vercel.app/api/generate \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "template": "${template}",
-    "title": "${title}",
-    "description": "${description}"
+    "template": "blog",
+    "title": "My Amazing Post",
+    "description": "A description of my post"
   }' --output image.png`,
 
-    javascript: `const response = await fetch('https://ogpix-mu.vercel.app/api/generate', {
+  javascript: `const response = await fetch('https://ogpix-mu.vercel.app/api/generate', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    template: '${template}',
-    title: '${title}',
-    description: '${description}',
+    template: 'blog',
+    title: 'My Amazing Post',
+    description: 'A description of my post',
   }),
 });
 
 const blob = await response.blob();
 const url = URL.createObjectURL(blob);`,
 
-    python: `import requests
+  python: `import requests
 
 response = requests.post(
     'https://ogpix-mu.vercel.app/api/generate',
     headers={'Authorization': 'Bearer YOUR_API_KEY'},
     json={
-        'template': '${template}',
-        'title': '${title}',
-        'description': '${description}',
+        'template': 'blog',
+        'title': 'My Amazing Post',
+        'description': 'A description of my post',
     }
 )
 
 with open('image.png', 'wb') as f:
     f.write(response.content)`,
-  };
-}
+};
 
 export default function Home() {
   const [demoTitle, setDemoTitle] = useState("My Amazing Article");
@@ -64,8 +62,6 @@ export default function Home() {
     `&title=${encodeURIComponent(demoTitle)}` +
     `&description=${encodeURIComponent(demoDesc)}` +
     `&theme=dark&demo=1`;
-
-  const codeExamples = getCodeExamples(demoTemplate, demoTitle, demoDesc);
 
   async function handleGetKey(e: React.FormEvent) {
     e.preventDefault();
@@ -278,13 +274,13 @@ export default function Home() {
           {/* Code */}
           <div className="relative p-6">
             <button
-              onClick={() => navigator.clipboard.writeText(codeExamples[codeTab])}
+              onClick={() => navigator.clipboard.writeText(CODE_EXAMPLES[codeTab])}
               className="absolute right-4 top-4 rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/50 transition-colors hover:text-white"
             >
               Copy
             </button>
             <pre className="overflow-x-auto font-mono text-sm leading-relaxed text-white/80">
-              <code>{codeExamples[codeTab]}</code>
+              <code>{CODE_EXAMPLES[codeTab]}</code>
             </pre>
           </div>
         </div>
@@ -293,7 +289,7 @@ export default function Home() {
         <div className="mt-8 rounded-2xl border border-white/5 bg-white/[0.03] p-6">
           <h3 className="mb-3 text-sm font-medium text-white/60">Use directly in your HTML</h3>
           <pre className="overflow-x-auto font-mono text-sm text-white/80">
-            <code>{`<meta property="og:image" content="https://ogpix-mu.vercel.app/api/generate?template=${demoTemplate}&title=${encodeURIComponent(demoTitle)}&api_key=YOUR_KEY" />`}</code>
+            <code>{`<meta property="og:image" content="https://ogpix-mu.vercel.app/api/generate?template=blog&title=My+Post&api_key=YOUR_KEY" />`}</code>
           </pre>
         </div>
       </section>
