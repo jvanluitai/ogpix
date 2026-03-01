@@ -199,23 +199,25 @@ export default function TemplateGalleryPage() {
             </div>
             <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em' }}>OGPix</span>
           </a>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 32, fontSize: 14 }}>
-            <a href="/" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>Home</a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 32, fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>
+            <a href="/#demo" style={{ color: 'inherit', textDecoration: 'none' }}>Demo</a>
+            <a href="/#pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Pricing</a>
             <a href="/templates" style={{ color: '#ffffff', textDecoration: 'none' }}>Templates</a>
-            <a
-              href="/#get-key"
-              style={{
-                background: '#6366f1',
-                color: '#fff',
-                padding: '8px 16px',
-                borderRadius: 8,
-                textDecoration: 'none',
-                fontWeight: 500,
-              }}
-            >
-              Get API Key
-            </a>
           </div>
+          <a
+            href="/#get-key"
+            style={{
+              background: '#6366f1',
+              color: '#fff',
+              padding: '8px 16px',
+              borderRadius: 8,
+              textDecoration: 'none',
+              fontWeight: 500,
+              fontSize: 14,
+            }}
+          >
+            Get API Key
+          </a>
         </div>
       </nav>
 
@@ -263,9 +265,7 @@ export default function TemplateGalleryPage() {
             Template Gallery
           </h1>
           <p style={{ fontSize: 20, color: '#a1a1aa', margin: 0, maxWidth: 560 }}>
-            Choose a template and start generating OG images in seconds. All templates support{' '}
-            <code style={{ color: '#6366f1', fontFamily: 'monospace' }}>brand_color</code> and{' '}
-            <code style={{ color: '#6366f1', fontFamily: 'monospace' }}>theme</code> customization.
+            Choose a template and start generating OG images in seconds. All templates are fully customizable via API parameters.
           </p>
         </div>
 
@@ -350,27 +350,6 @@ export default function TemplateGalleryPage() {
             </div>
             </Link>
           ))}
-        </div>
-
-        {/* Footer */}
-        <div
-          style={{
-            maxWidth: 1100,
-            margin: '80px auto 0',
-            borderTop: '1px solid #27272a',
-            paddingTop: 40,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <span style={{ color: '#52525b', fontSize: 14 }}>ogpix.dev</span>
-          <a
-            href="/api/generate?template=blog&title=My+Post&demo=1"
-            style={{ color: '#6366f1', fontSize: 14, textDecoration: 'none' }}
-          >
-            Try the API →
-          </a>
         </div>
       </main>
     </div>

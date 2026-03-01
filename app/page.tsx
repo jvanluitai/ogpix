@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 const TEMPLATES = ["blog", "product", "social", "minimal", "gradient", "changelog", "docs", "tweet", "profile", "event", "podcast", "pricing", "newsletter", "comparison", "announcement"] as const;
 type Template = (typeof TEMPLATES)[number];
 
-function getCodeExamples(template: Template, title: string, description: string) {
+function getCodeExamples(template: Template, title: string, description: string, theme: 'light' | 'dark', brand_color: string) {
   return {
     curl: `curl -X POST https://ogpix-mu.vercel.app/api/generate \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
@@ -14,7 +14,9 @@ function getCodeExamples(template: Template, title: string, description: string)
   -d '{
     "template": "${template}",
     "title": "${title}",
-    "description": "${description}"
+    "description": "${description}",
+    "theme": "${theme}",
+    "brand_color": "${brand_color}"
   }' --output image.png`,
 
     javascript: `const response = await fetch('https://ogpix-mu.vercel.app/api/generate', {
@@ -27,6 +29,8 @@ function getCodeExamples(template: Template, title: string, description: string)
     template: '${template}',
     title: '${title}',
     description: '${description}',
+    theme: '${theme}',
+    brand_color: '${brand_color}',
   }),
 });
 
@@ -42,6 +46,8 @@ response = requests.post(
         'template': '${template}',
         'title': '${title}',
         'description': '${description}',
+        'theme': '${theme}',
+        'brand_color': '${brand_color}',
     }
 )
 
@@ -54,6 +60,8 @@ function HomeContent() {
   const [demoTitle, setDemoTitle] = useState("My Amazing Article");
   const [demoDesc, setDemoDesc] = useState("The future of social sharing starts here");
   const [demoTemplate, setDemoTemplate] = useState<Template>("blog");
+  const [demoTheme, setDemoTheme] = useState<'light' | 'dark'>('dark');
+  const [demoBrandColor, setDemoBrandColor] = useState('#6366f1');
   const [codeTab, setCodeTab] = useState<"curl" | "javascript" | "python">("curl");
   const [email, setEmail] = useState("");
   const [apiKey, setApiKey] = useState("");
@@ -76,9 +84,9 @@ function HomeContent() {
     `/api/generate?template=${demoTemplate}` +
     `&title=${encodeURIComponent(demoTitle)}` +
     `&description=${encodeURIComponent(demoDesc)}` +
-    `&theme=dark&demo=1`;
+    `&theme=${demoTheme}&brand_color=${encodeURIComponent(demoBrandColor)}&demo=1`;
 
-  const codeExamples = getCodeExamples(demoTemplate, demoTitle, demoDesc);
+  const codeExamples = getCodeExamples(demoTemplate, demoTitle, demoDesc, demoTheme, demoBrandColor);
 
   async function handleGetKey(e: React.FormEvent) {
     e.preventDefault();
@@ -217,6 +225,38 @@ function HomeContent() {
             </div>
 
             <div>
+              <label className="mb-2 block text-sm font-medium text-white/60">Theme</label>
+              <div className="flex gap-2">
+                {(["light", "dark"] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setDemoTheme(t)}
+                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors capitalize ${
+                      demoTheme === t
+                        ? "bg-indigo-500 text-white"
+                        : "border border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-white/60">Brand Color</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={demoBrandColor}
+                  onChange={(e) => setDemoBrandColor(e.target.value)}
+                  className="h-10 w-10 cursor-pointer rounded-lg border border-white/10 bg-transparent"
+                />
+                <span className="font-mono text-sm text-white/60">{demoBrandColor}</span>
+              </div>
+            </div>
+
+            <div>
               <label className="mb-2 block text-sm font-medium text-white/60">Title</label>
               <input
                 type="text"
@@ -241,7 +281,7 @@ function HomeContent() {
             </div>
 
             <div className="rounded-lg border border-white/5 bg-black/30 p-3 font-mono text-xs text-white/40 break-all">
-              GET {previewUrl}
+              GET /api/generate?template={demoTemplate}&title={encodeURIComponent(demoTitle)}&description={encodeURIComponent(demoDesc)}&theme={demoTheme}&brand_color={encodeURIComponent(demoBrandColor)}&demo=1
             </div>
           </div>
 
@@ -306,7 +346,7 @@ function HomeContent() {
         <div className="mt-8 rounded-2xl border border-white/5 bg-white/[0.03] p-6">
           <h3 className="mb-3 text-sm font-medium text-white/60">Use directly in your HTML</h3>
           <pre className="overflow-x-auto font-mono text-sm text-white/80">
-            <code>{`<meta property="og:image" content="https://ogpix-mu.vercel.app/api/generate?template=${demoTemplate}&title=${encodeURIComponent(demoTitle)}&api_key=YOUR_KEY" />`}</code>
+            <code>{`<meta property="og:image" content="https://ogpix-mu.vercel.app/api/generate?template=${demoTemplate}&title=${encodeURIComponent(demoTitle)}&theme=${demoTheme}&brand_color=${encodeURIComponent(demoBrandColor)}&api_key=YOUR_KEY" />`}</code>
           </pre>
         </div>
       </section>
