@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import SiteHeader from "@/components/SiteHeader";
 
 const TEMPLATES = ["blog", "product", "social", "minimal", "gradient", "changelog", "docs", "tweet", "profile", "event", "podcast", "pricing", "newsletter", "comparison", "announcement"] as const;
 type Template = (typeof TEMPLATES)[number];
@@ -111,32 +112,7 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <rect x="1" y="1" width="6" height="4" rx="1" fill="white" />
-                <rect x="9" y="1" width="6" height="4" rx="1" fill="white" opacity="0.6" />
-                <rect x="1" y="7" width="14" height="2" rx="1" fill="white" opacity="0.4" />
-                <rect x="1" y="11" width="10" height="2" rx="1" fill="white" opacity="0.3" />
-              </svg>
-            </div>
-            <span className="text-lg font-semibold tracking-tight">OGPix</span>
-          </div>
-          <div className="hidden items-center gap-8 text-sm text-white/60 sm:flex">
-            <a href="#demo" className="transition-colors hover:text-white">Demo</a>
-            <a href="#pricing" className="transition-colors hover:text-white">Pricing</a>
-            <a href="/templates" className="transition-colors hover:text-white">Templates</a>
-          </div>
-          <a
-            href="#get-key"
-            className="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-medium transition-colors hover:bg-indigo-400"
-          >
-            Get API Key
-          </a>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* Hero */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pt-20">

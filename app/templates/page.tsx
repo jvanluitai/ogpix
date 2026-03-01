@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SiteHeader from '@/components/SiteHeader';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -155,71 +156,7 @@ export default function TemplateGalleryPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#09090b', color: '#fafafa', fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Site Navigation */}
-      <nav
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-          background: 'rgba(10,10,10,0.8)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1100,
-            margin: '0 auto',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '16px 24px',
-          }}
-        >
-          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', color: '#fafafa' }}>
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 8,
-                background: '#6366f1',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <rect x="1" y="1" width="6" height="4" rx="1" fill="white" />
-                <rect x="9" y="1" width="6" height="4" rx="1" fill="white" opacity="0.6" />
-                <rect x="1" y="7" width="14" height="2" rx="1" fill="white" opacity="0.4" />
-                <rect x="1" y="11" width="10" height="2" rx="1" fill="white" opacity="0.3" />
-              </svg>
-            </div>
-            <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em' }}>OGPix</span>
-          </a>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 32, fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>
-            <a href="/#demo" style={{ color: 'inherit', textDecoration: 'none' }}>Demo</a>
-            <a href="/#pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Pricing</a>
-            <a href="/templates" style={{ color: '#ffffff', textDecoration: 'none' }}>Templates</a>
-          </div>
-          <a
-            href="/#get-key"
-            style={{
-              background: '#6366f1',
-              color: '#fff',
-              padding: '8px 16px',
-              borderRadius: 8,
-              textDecoration: 'none',
-              fontWeight: 500,
-              fontSize: 14,
-            }}
-          >
-            Get API Key
-          </a>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <main
         style={{
