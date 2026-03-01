@@ -6,6 +6,16 @@ import {
   SocialTemplate,
   MinimalTemplate,
   GradientTemplate,
+  ChangelogTemplate,
+  DocsTemplate,
+  TweetTemplate,
+  ProfileTemplate,
+  EventTemplate,
+  PodcastTemplate,
+  PricingTemplate,
+  NewsletterTemplate,
+  ComparisonTemplate,
+  AnnouncementTemplate,
 } from '@/lib/templates';
 import { checkAndIncrementUsage, extractBearerToken } from '@/lib/usage';
 
@@ -17,6 +27,16 @@ const TEMPLATES = {
   social: SocialTemplate,
   minimal: MinimalTemplate,
   gradient: GradientTemplate,
+  changelog: ChangelogTemplate,
+  docs: DocsTemplate,
+  tweet: TweetTemplate,
+  profile: ProfileTemplate,
+  event: EventTemplate,
+  podcast: PodcastTemplate,
+  pricing: PricingTemplate,
+  newsletter: NewsletterTemplate,
+  comparison: ComparisonTemplate,
+  announcement: AnnouncementTemplate,
 } as const;
 
 type TemplateName = keyof typeof TEMPLATES;
