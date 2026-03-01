@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 
-const TEMPLATES = ["blog", "product", "social", "minimal", "gradient"] as const;
+const TEMPLATES = ["blog", "product", "social", "minimal", "gradient", "changelog", "docs", "tweet", "profile", "event", "podcast", "pricing", "newsletter", "comparison", "announcement"] as const;
 type Template = (typeof TEMPLATES)[number];
 
 const CODE_EXAMPLES = {
-  curl: `curl -X POST https://ogpix.com/api/generate \\
+  curl: `curl -X POST https://ogpix-mu.vercel.app/api/generate \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -15,7 +15,7 @@ const CODE_EXAMPLES = {
     "description": "A description of my post"
   }' --output image.png`,
 
-  javascript: `const response = await fetch('https://ogpix.com/api/generate', {
+  javascript: `const response = await fetch('https://ogpix-mu.vercel.app/api/generate', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
@@ -34,7 +34,7 @@ const url = URL.createObjectURL(blob);`,
   python: `import requests
 
 response = requests.post(
-    'https://ogpix.com/api/generate',
+    'https://ogpix-mu.vercel.app/api/generate',
     headers={'Authorization': 'Bearer YOUR_API_KEY'},
     json={
         'template': 'blog',
@@ -61,7 +61,7 @@ export default function Home() {
     `/api/generate?template=${demoTemplate}` +
     `&title=${encodeURIComponent(demoTitle)}` +
     `&description=${encodeURIComponent(demoDesc)}` +
-    `&theme=darktheme=dark&demo=1`;
+    `&theme=dark&demo=1`;
 
   async function handleGetKey(e: React.FormEvent) {
     e.preventDefault();
@@ -102,7 +102,7 @@ export default function Home() {
           <div className="hidden items-center gap-8 text-sm text-white/60 sm:flex">
             <a href="#demo" className="transition-colors hover:text-white">Demo</a>
             <a href="#pricing" className="transition-colors hover:text-white">Pricing</a>
-            <a href="#docs" className="transition-colors hover:text-white">Docs</a>
+            <a href="/templates" className="transition-colors hover:text-white">Templates</a>
           </div>
           <a
             href="#get-key"
@@ -123,7 +123,7 @@ export default function Home() {
         <div className="relative z-10 mx-auto max-w-4xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-sm text-indigo-300">
             <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
-            5 templates · REST API · PNG output
+            15 templates · REST API · PNG output
           </div>
 
           <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
@@ -157,7 +157,7 @@ export default function Home() {
           {/* Stats */}
           <div className="mt-16 grid grid-cols-3 gap-8 border-t border-white/5 pt-12">
             {[
-              { label: "Templates", value: "5" },
+              { label: "Templates", value: "15" },
               { label: "Free images/mo", value: "50" },
               { label: "Avg response", value: "<200ms" },
             ].map(({ label, value }) => (
@@ -289,7 +289,7 @@ export default function Home() {
         <div className="mt-8 rounded-2xl border border-white/5 bg-white/[0.03] p-6">
           <h3 className="mb-3 text-sm font-medium text-white/60">Use directly in your HTML</h3>
           <pre className="overflow-x-auto font-mono text-sm text-white/80">
-            <code>{`<meta property="og:image" content="https://ogpix.com/api/generate?template=blog&title=My+Post&api_key=YOUR_KEY" />`}</code>
+            <code>{`<meta property="og:image" content="https://ogpix-mu.vercel.app/api/generate?template=blog&title=My+Post&api_key=YOUR_KEY" />`}</code>
           </pre>
         </div>
       </section>
@@ -308,18 +308,18 @@ export default function Home() {
               price: "$0",
               period: "forever",
               description: "Perfect for side projects and experimentation.",
-              features: ["50 images / month", "All 5 templates", "PNG output", "REST API access"],
+              features: ["50 images / month", "All 15 templates", "PNG output", "REST API access"],
               cta: "Get started",
               href: "#get-key",
               highlight: false,
             },
             {
               name: "Starter",
-              price: "$9",
+              price: "$12",
               period: "per month",
               description: "For growing projects that need more volume.",
-              features: ["1,000 images / month", "All 5 templates", "PNG output", "Priority support"],
-              cta: "Start for $9/mo",
+              features: ["2,000 images / month", "All 15 templates", "PNG output", "Priority support"],
+              cta: "Start for $12/mo",
               href: "#get-key",
               highlight: true,
             },
@@ -328,7 +328,7 @@ export default function Home() {
               price: "$29",
               period: "per month",
               description: "For teams and high-traffic applications.",
-              features: ["10,000 images / month", "All 5 templates", "PNG output", "SLA + priority support"],
+              features: ["10,000 images / month", "All 15 templates", "PNG output", "SLA + priority support"],
               cta: "Go Pro",
               href: "#get-key",
               highlight: false,
