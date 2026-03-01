@@ -152,162 +152,225 @@ function buildPreviewUrl(t: TemplateCard): string {
 
 export default function TemplateGalleryPage() {
   return (
-    <main
-      style={{
-        minHeight: '100vh',
-        background: '#09090b',
-        color: '#fafafa',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        padding: '64px 40px',
-      }}
-    >
-      {/* Header */}
-      <div style={{ maxWidth: 1100, margin: '0 auto 64px' }}>
+    <div style={{ minHeight: '100vh', background: '#09090b', color: '#fafafa', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      {/* Site Navigation */}
+      <nav
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          borderBottom: '1px solid rgba(255,255,255,0.05)',
+          background: 'rgba(10,10,10,0.8)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        }}
+      >
         <div
           style={{
-            display: 'inline-flex',
+            maxWidth: 1100,
+            margin: '0 auto',
+            display: 'flex',
             alignItems: 'center',
-            gap: 8,
-            background: '#6366f120',
-            border: '1px solid #6366f140',
-            borderRadius: 100,
-            padding: '4px 16px',
-            marginBottom: 20,
+            justifyContent: 'space-between',
+            padding: '16px 24px',
           }}
         >
-          <div
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: '50%',
-              background: '#6366f1',
-            }}
-          />
-          <span style={{ color: '#6366f1', fontSize: 13, fontWeight: 600, letterSpacing: '0.06em' }}>
-            15 TEMPLATES
-          </span>
-        </div>
-
-        <h1
-          style={{
-            fontSize: 52,
-            fontWeight: 900,
-            letterSpacing: '-0.03em',
-            margin: '0 0 16px',
-            color: '#ffffff',
-          }}
-        >
-          Template Gallery
-        </h1>
-        <p style={{ fontSize: 20, color: '#a1a1aa', margin: 0, maxWidth: 560 }}>
-          Choose a template and start generating OG images in seconds. All templates support{' '}
-          <code style={{ color: '#6366f1', fontFamily: 'monospace' }}>brand_color</code> and{' '}
-          <code style={{ color: '#6366f1', fontFamily: 'monospace' }}>theme</code> customization.
-        </p>
-      </div>
-
-      {/* Grid */}
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: 32,
-        }}
-      >
-        {TEMPLATES.map((t) => (
-          <div
-            key={t.name}
-            style={{
-              background: '#18181b',
-              border: '1px solid #27272a',
-              borderRadius: 16,
-              overflow: 'hidden',
-              transition: 'border-color 0.2s',
-            }}
-          >
-            {/* Preview image */}
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', color: '#fafafa' }}>
             <div
               style={{
-                background: '#0a0a0c',
-                borderBottom: '1px solid #27272a',
-                overflow: 'hidden',
-                lineHeight: 0,
+                width: 32,
+                height: 32,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 8,
+                background: '#6366f1',
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={buildPreviewUrl(t)}
-                alt={`${t.label} template preview`}
-                width={1200}
-                height={630}
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  display: 'block',
-                }}
-              />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="1" y="1" width="6" height="4" rx="1" fill="white" />
+                <rect x="9" y="1" width="6" height="4" rx="1" fill="white" opacity="0.6" />
+                <rect x="1" y="7" width="14" height="2" rx="1" fill="white" opacity="0.4" />
+                <rect x="1" y="11" width="10" height="2" rx="1" fill="white" opacity="0.3" />
+              </svg>
             </div>
-
-            {/* Card info */}
-            <div style={{ padding: '20px 24px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 8,
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 700,
-                    color: '#fafafa',
-                  }}
-                >
-                  {t.label}
-                </span>
-                <code
-                  style={{
-                    fontSize: 12,
-                    color: '#71717a',
-                    background: '#27272a',
-                    borderRadius: 4,
-                    padding: '2px 8px',
-                    fontFamily: 'monospace',
-                  }}
-                >
-                  {t.name}
-                </code>
-              </div>
-              <p style={{ fontSize: 14, color: '#71717a', margin: 0 }}>{t.tagline}</p>
-            </div>
+            <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em' }}>OGPix</span>
+          </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 32, fontSize: 14 }}>
+            <a href="/" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>Home</a>
+            <a href="/templates" style={{ color: '#ffffff', textDecoration: 'none' }}>Templates</a>
+            <a
+              href="/#get-key"
+              style={{
+                background: '#6366f1',
+                color: '#fff',
+                padding: '8px 16px',
+                borderRadius: 8,
+                textDecoration: 'none',
+                fontWeight: 500,
+              }}
+            >
+              Get API Key
+            </a>
           </div>
-        ))}
-      </div>
+        </div>
+      </nav>
 
-      {/* Footer */}
-      <div
+      <main
         style={{
-          maxWidth: 1100,
-          margin: '80px auto 0',
-          borderTop: '1px solid #27272a',
-          paddingTop: 40,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          padding: '120px 40px 64px',
         }}
       >
-        <span style={{ color: '#52525b', fontSize: 14 }}>ogpix.dev</span>
-        <a
-          href="/api/generate?template=blog&title=My+Post&demo=1"
-          style={{ color: '#6366f1', fontSize: 14, textDecoration: 'none' }}
+        {/* Header */}
+        <div style={{ maxWidth: 1100, margin: '0 auto 64px' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: '#6366f120',
+              border: '1px solid #6366f140',
+              borderRadius: 100,
+              padding: '4px 16px',
+              marginBottom: 20,
+            }}
+          >
+            <div
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                background: '#6366f1',
+              }}
+            />
+            <span style={{ color: '#6366f1', fontSize: 13, fontWeight: 600, letterSpacing: '0.06em' }}>
+              15 TEMPLATES
+            </span>
+          </div>
+
+          <h1
+            style={{
+              fontSize: 52,
+              fontWeight: 900,
+              letterSpacing: '-0.03em',
+              margin: '0 0 16px',
+              color: '#ffffff',
+            }}
+          >
+            Template Gallery
+          </h1>
+          <p style={{ fontSize: 20, color: '#a1a1aa', margin: 0, maxWidth: 560 }}>
+            Choose a template and start generating OG images in seconds. All templates support{' '}
+            <code style={{ color: '#6366f1', fontFamily: 'monospace' }}>brand_color</code> and{' '}
+            <code style={{ color: '#6366f1', fontFamily: 'monospace' }}>theme</code> customization.
+          </p>
+        </div>
+
+        {/* Grid */}
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: 32,
+          }}
         >
-          Try the API →
-        </a>
-      </div>
-    </main>
+          {TEMPLATES.map((t) => (
+            <div
+              key={t.name}
+              style={{
+                background: '#18181b',
+                border: '1px solid #27272a',
+                borderRadius: 16,
+                overflow: 'hidden',
+                transition: 'border-color 0.2s',
+              }}
+            >
+              {/* Preview image */}
+              <div
+                style={{
+                  background: '#0a0a0c',
+                  borderBottom: '1px solid #27272a',
+                  overflow: 'hidden',
+                  lineHeight: 0,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={buildPreviewUrl(t)}
+                  alt={`${t.label} template preview`}
+                  width={1200}
+                  height={630}
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    display: 'block',
+                  }}
+                />
+              </div>
+
+              {/* Card info */}
+              <div style={{ padding: '20px 24px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: '#fafafa',
+                    }}
+                  >
+                    {t.label}
+                  </span>
+                  <code
+                    style={{
+                      fontSize: 12,
+                      color: '#71717a',
+                      background: '#27272a',
+                      borderRadius: 4,
+                      padding: '2px 8px',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {t.name}
+                  </code>
+                </div>
+                <p style={{ fontSize: 14, color: '#71717a', margin: 0 }}>{t.tagline}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: '80px auto 0',
+            borderTop: '1px solid #27272a',
+            paddingTop: 40,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span style={{ color: '#52525b', fontSize: 14 }}>ogpix.dev</span>
+          <a
+            href="/api/generate?template=blog&title=My+Post&demo=1"
+            style={{ color: '#6366f1', fontSize: 14, textDecoration: 'none' }}
+          >
+            Try the API →
+          </a>
+        </div>
+      </main>
+    </div>
   );
 }
