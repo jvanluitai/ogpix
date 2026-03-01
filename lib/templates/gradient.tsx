@@ -102,7 +102,7 @@ export function GradientTemplate({
           <div
             style={{
               display: 'flex',
-              width: 'fit-content',
+              
               background: 'rgba(255,255,255,0.15)',
               borderRadius: 100,
               padding: '4px 16px',
