@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
 const TEMPLATES = ["blog", "product", "social", "minimal", "gradient", "changelog", "docs", "tweet", "profile", "event", "podcast", "pricing", "newsletter", "comparison", "announcement"] as const;
 type Template = (typeof TEMPLATES)[number];
@@ -49,7 +50,7 @@ with open('image.png', 'wb') as f:
   };
 }
 
-export default function Home() {
+function HomeContent() {
   const [demoTitle, setDemoTitle] = useState("My Amazing Article");
   const [demoDesc, setDemoDesc] = useState("The future of social sharing starts here");
   const [demoTemplate, setDemoTemplate] = useState<Template>("blog");
@@ -58,6 +59,18 @@ export default function Home() {
   const [apiKey, setApiKey] = useState("");
   const [keyLoading, setKeyLoading] = useState(false);
   const [keyError, setKeyError] = useState("");
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const templateParam = searchParams.get('template');
+    if (templateParam && TEMPLATES.includes(templateParam as Template)) {
+      setDemoTemplate(templateParam as Template);
+      setTimeout(() => {
+        document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [searchParams]);
 
   const previewUrl =
     `/api/generate?template=${demoTemplate}` +
@@ -456,5 +469,13 @@ export default function Home() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
   );
 }

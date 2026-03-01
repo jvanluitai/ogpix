@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -279,8 +280,8 @@ export default function TemplateGalleryPage() {
           }}
         >
           {TEMPLATES.map((t) => (
+            <Link key={t.name} href={`/?template=${t.name}#demo`} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div
-              key={t.name}
               style={{
                 background: '#18181b',
                 border: '1px solid #27272a',
@@ -347,6 +348,7 @@ export default function TemplateGalleryPage() {
                 <p style={{ fontSize: 14, color: '#71717a', margin: 0 }}>{t.tagline}</p>
               </div>
             </div>
+            </Link>
           ))}
         </div>
 
