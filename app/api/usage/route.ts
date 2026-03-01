@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getApiKey } from '@/lib/db';
 import { extractBearerToken, getUsageInfo } from '@/lib/usage';
 
+export const runtime = 'edge';
+
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('Authorization');
   const token = extractBearerToken(authHeader);
@@ -13,11 +15,11 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const apiKey = getApiKey(token);
+  const apiKey = await getApiKey(token);
   if (!apiKey) {
     return NextResponse.json({ error: 'Invalid API key' }, { status: 401 });
   }
 
-  const info = getUsageInfo(apiKey);
+  const info = await getUsageInfo(apiKey);
   return NextResponse.json(info);
 }

@@ -1,46 +1,11 @@
-import Database from 'better-sqlite3';
-import path from 'path';
-import { randomBytes } from 'crypto';
+import { Redis } from '@upstash/redis';
 
-const DB_PATH = process.env.NODE_ENV === 'production'
-  ? '/tmp/ogpix.db'
-  : path.join(process.cwd(), 'ogpix.db');
-
-let db: Database.Database;
-
-function getDb(): Database.Database {
-  if (!db) {
-    db = new Database(DB_PATH);
-    db.pragma('journal_mode = WAL');
-    db.pragma('foreign_keys = ON');
-    initSchema();
-  }
-  return db;
-}
-
-function initSchema(): void {
-  getDb().exec(`
-    CREATE TABLE IF NOT EXISTS api_keys (
-      id INTEGER PRIMARY KEY,
-      key TEXT UNIQUE NOT NULL,
-      email TEXT NOT NULL,
-      plan TEXT DEFAULT 'free',
-      stripe_customer_id TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS usage (
-      id INTEGER PRIMARY KEY,
-      api_key_id INTEGER REFERENCES api_keys(id),
-      month TEXT NOT NULL,
-      count INTEGER DEFAULT 0,
-      UNIQUE(api_key_id, month)
-    );
-  `);
-}
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
 export interface ApiKey {
-  id: number;
   key: string;
   email: string;
   plan: string;
@@ -48,59 +13,60 @@ export interface ApiKey {
   created_at: string;
 }
 
-export interface UsageRecord {
-  id: number;
-  api_key_id: number;
-  month: string;
-  count: number;
+function generateApiKey(): string {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return 'ogp_' + Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
 }
 
-export function createApiKey(email: string): ApiKey {
-  const key = 'ogp_' + randomBytes(32).toString('hex');
-  const stmt = getDb().prepare(
-    'INSERT INTO api_keys (key, email) VALUES (?, ?) RETURNING *'
-  );
-  return stmt.get(key, email) as ApiKey;
+export async function createApiKey(email: string): Promise<ApiKey> {
+  const key = generateApiKey();
+  const record: ApiKey = {
+    key,
+    email,
+    plan: 'free',
+    stripe_customer_id: null,
+    created_at: new Date().toISOString(),
+  };
+  await redis.set(`ogpix:key:${key}`, record);
+  await redis.set(`ogpix:email:${email}`, key);
+  return record;
 }
 
-export function getApiKey(key: string): ApiKey | undefined {
-  const stmt = getDb().prepare('SELECT * FROM api_keys WHERE key = ?');
-  return stmt.get(key) as ApiKey | undefined;
+export async function getApiKey(key: string): Promise<ApiKey | null> {
+  return redis.get<ApiKey>(`ogpix:key:${key}`);
 }
 
-export function getApiKeyByEmail(email: string): ApiKey | undefined {
-  const stmt = getDb().prepare('SELECT * FROM api_keys WHERE email = ?');
-  return stmt.get(email) as ApiKey | undefined;
+export async function getApiKeyByEmail(email: string): Promise<ApiKey | null> {
+  const key = await redis.get<string>(`ogpix:email:${email}`);
+  if (!key) return null;
+  return getApiKey(key);
 }
 
-export function updatePlan(keyId: number, plan: string, stripeCustomerId?: string): void {
+export async function updatePlan(key: string, plan: string, stripeCustomerId?: string): Promise<void> {
+  const record = await getApiKey(key);
+  if (!record) return;
+  record.plan = plan;
   if (stripeCustomerId) {
-    getDb().prepare('UPDATE api_keys SET plan = ?, stripe_customer_id = ? WHERE id = ?')
-      .run(plan, stripeCustomerId, keyId);
-  } else {
-    getDb().prepare('UPDATE api_keys SET plan = ? WHERE id = ?')
-      .run(plan, keyId);
+    record.stripe_customer_id = stripeCustomerId;
+    await redis.set(`ogpix:customer:${stripeCustomerId}`, key);
   }
+  await redis.set(`ogpix:key:${key}`, record);
 }
 
-export function updatePlanByStripeCustomer(stripeCustomerId: string, plan: string): void {
-  getDb().prepare('UPDATE api_keys SET plan = ? WHERE stripe_customer_id = ?')
-    .run(plan, stripeCustomerId);
+export async function updatePlanByStripeCustomer(stripeCustomerId: string, plan: string): Promise<void> {
+  const key = await redis.get<string>(`ogpix:customer:${stripeCustomerId}`);
+  if (!key) return;
+  await updatePlan(key, plan);
 }
 
-export function getUsage(apiKeyId: number, month: string): UsageRecord | undefined {
-  const stmt = getDb().prepare(
-    'SELECT * FROM usage WHERE api_key_id = ? AND month = ?'
-  );
-  return stmt.get(apiKeyId, month) as UsageRecord | undefined;
+export async function getUsageCount(apiKey: string, month: string): Promise<number> {
+  const count = await redis.get<number>(`ogpix:usage:${apiKey}:${month}`);
+  return count ?? 0;
 }
 
-export function incrementUsage(apiKeyId: number, month: string): void {
-  getDb().prepare(`
-    INSERT INTO usage (api_key_id, month, count)
-    VALUES (?, ?, 1)
-    ON CONFLICT(api_key_id, month) DO UPDATE SET count = count + 1
-  `).run(apiKeyId, month);
+export async function incrementUsage(apiKey: string, month: string): Promise<void> {
+  await redis.incr(`ogpix:usage:${apiKey}:${month}`);
 }
 
 export function getCurrentMonth(): string {

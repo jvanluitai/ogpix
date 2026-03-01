@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createApiKey, getApiKeyByEmail } from '@/lib/db';
 
+export const runtime = 'edge';
+
 export async function POST(request: NextRequest) {
   let email: string | undefined;
 
@@ -30,7 +32,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // Return existing key if email already registered
-    const existing = getApiKeyByEmail(email);
+    const existing = await getApiKeyByEmail(email);
     if (existing) {
       return NextResponse.json({
         api_key: existing.key,
@@ -39,7 +41,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const apiKey = createApiKey(email);
+    const apiKey = await createApiKey(email);
     return NextResponse.json(
       {
         api_key: apiKey.key,

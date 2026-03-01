@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'API key required' }, { status: 400 });
   }
 
-  const apiKey = getApiKey(apiKeyValue);
+  const apiKey = await getApiKey(apiKeyValue);
   if (!apiKey) {
     return NextResponse.json({ error: 'Invalid API key' }, { status: 401 });
   }

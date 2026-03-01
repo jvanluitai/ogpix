@@ -1,6 +1,6 @@
 import {
   getApiKey,
-  getUsage,
+  getUsageCount,
   incrementUsage,
   getCurrentMonth,
   type ApiKey,
@@ -22,32 +22,31 @@ export function getPlanLimit(plan: string): number {
   return PLAN_LIMITS[plan] ?? 50;
 }
 
-export function getUsageInfo(apiKey: ApiKey): UsageInfo {
+export async function getUsageInfo(apiKey: ApiKey): Promise<UsageInfo> {
   const month = getCurrentMonth();
-  const usage = getUsage(apiKey.id, month);
+  const used = await getUsageCount(apiKey.key, month);
   const limit = getPlanLimit(apiKey.plan);
   return {
-    used: usage?.count ?? 0,
+    used,
     limit,
     plan: apiKey.plan,
   };
 }
 
-export function checkAndIncrementUsage(bearerToken: string): {
+export async function checkAndIncrementUsage(bearerToken: string): Promise<{
   ok: boolean;
   error?: string;
   status?: number;
   apiKey?: ApiKey;
-} {
-  const apiKey = getApiKey(bearerToken);
+}> {
+  const apiKey = await getApiKey(bearerToken);
   if (!apiKey) {
     return { ok: false, error: 'Invalid API key', status: 401 };
   }
 
   const month = getCurrentMonth();
-  const usage = getUsage(apiKey.id, month);
+  const used = await getUsageCount(apiKey.key, month);
   const limit = getPlanLimit(apiKey.plan);
-  const used = usage?.count ?? 0;
 
   if (used >= limit) {
     return {
@@ -57,7 +56,7 @@ export function checkAndIncrementUsage(bearerToken: string): {
     };
   }
 
-  incrementUsage(apiKey.id, month);
+  await incrementUsage(apiKey.key, month);
   return { ok: true, apiKey };
 }
 

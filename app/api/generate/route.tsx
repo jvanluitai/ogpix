@@ -1,6 +1,5 @@
 import { ImageResponse } from '@vercel/og';
 import { NextRequest, NextResponse } from 'next/server';
-// Auth imports loaded dynamically to avoid better-sqlite3 on Vercel edge
 import {
   BlogTemplate,
   ProductTemplate,
@@ -8,6 +7,7 @@ import {
   MinimalTemplate,
   GradientTemplate,
 } from '@/lib/templates';
+import { checkAndIncrementUsage, extractBearerToken } from '@/lib/usage';
 
 export const runtime = 'edge';
 
@@ -68,17 +68,23 @@ function parseParams(data: Record<string, string | undefined>): GenerateParams |
 }
 
 async function handleRequest(request: NextRequest, bodyData?: Record<string, string>) {
-  // Allow demo previews without auth
   const isDemo = request.nextUrl.searchParams.get("demo") === "1";
-  
+
   let plan = 'free';
   if (!isDemo) {
-    // Auth requires DB — not available on edge runtime
-    // TODO: Replace with Vercel KV or external DB for production auth
-    return NextResponse.json(
-      { error: 'Authenticated API requires server runtime. Use ?demo=1 for preview or self-host for full auth.' },
-      { status: 501 }
-    );
+    const token = extractBearerToken(request.headers.get('Authorization'));
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Missing Authorization header. Use: Authorization: Bearer <api_key>' },
+        { status: 401 }
+      );
+    }
+
+    const result = await checkAndIncrementUsage(token);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
+    }
+    plan = result.apiKey!.plan;
   }
 
   // Parse params (from body or query string)

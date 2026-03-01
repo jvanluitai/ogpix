@@ -51,9 +51,9 @@ export async function POST(request: NextRequest) {
           const plan = getPlanFromPriceId(priceId);
 
           if (apiKeyValue) {
-            const apiKey = getApiKey(apiKeyValue);
+            const apiKey = await getApiKey(apiKeyValue);
             if (apiKey) {
-              updatePlan(apiKey.id, plan, customerId);
+              await updatePlan(apiKey.key, plan, customerId);
             }
           }
         }
@@ -65,14 +65,14 @@ export async function POST(request: NextRequest) {
         const priceId = subscription.items.data[0]?.price.id ?? '';
         const plan = getPlanFromPriceId(priceId);
         const customerId = subscription.customer as string;
-        updatePlanByStripeCustomer(customerId, plan);
+        await updatePlanByStripeCustomer(customerId, plan);
         break;
       }
 
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription;
         const customerId = subscription.customer as string;
-        updatePlanByStripeCustomer(customerId, 'free');
+        await updatePlanByStripeCustomer(customerId, 'free');
         break;
       }
 
