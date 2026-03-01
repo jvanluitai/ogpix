@@ -61,7 +61,7 @@ export default function Home() {
     `/api/generate?template=${demoTemplate}` +
     `&title=${encodeURIComponent(demoTitle)}` +
     `&description=${encodeURIComponent(demoDesc)}` +
-    `&theme=dark`;
+    `&theme=darktheme=dark&demo=1`;
 
   async function handleGetKey(e: React.FormEvent) {
     e.preventDefault();

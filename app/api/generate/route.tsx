@@ -68,23 +68,30 @@ function parseParams(data: Record<string, string | undefined>): GenerateParams |
 }
 
 async function handleRequest(request: NextRequest, bodyData?: Record<string, string>) {
-  // Auth check
-  const authHeader = request.headers.get('Authorization');
-  const token = extractBearerToken(authHeader);
+  // Allow demo previews without auth
+  const isDemo = request.nextUrl.searchParams.get("demo") === "1";
+  
+  let plan = 'free';
+  if (!isDemo) {
+    // Auth check
+    const authHeader = request.headers.get('Authorization');
+    const token = extractBearerToken(authHeader);
 
-  if (!token) {
-    return NextResponse.json(
-      { error: 'Missing Authorization header. Use: Authorization: Bearer <api_key>' },
-      { status: 401 }
-    );
-  }
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Missing Authorization header. Use: Authorization: Bearer <api_key>' },
+        { status: 401 }
+      );
+    }
 
-  const authResult = checkAndIncrementUsage(token);
-  if (!authResult.ok) {
-    return NextResponse.json(
-      { error: authResult.error },
-      { status: authResult.status }
-    );
+    const authResult = checkAndIncrementUsage(token);
+    if (!authResult.ok) {
+      return NextResponse.json(
+        { error: authResult.error },
+        { status: authResult.status }
+      );
+    }
+    plan = authResult.apiKey!.plan;
   }
 
   // Parse params (from body or query string)
@@ -116,7 +123,7 @@ async function handleRequest(request: NextRequest, bodyData?: Record<string, str
       headers: {
         'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=3600, s-maxage=3600',
-        'X-OGPix-Plan': authResult.apiKey!.plan,
+        'X-OGPix-Plan': plan,
       },
     });
 
