@@ -9,7 +9,7 @@ import {
   GradientTemplate,
 } from '@/lib/templates';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 const TEMPLATES = {
   blog: BlogTemplate,
@@ -73,27 +73,12 @@ async function handleRequest(request: NextRequest, bodyData?: Record<string, str
   
   let plan = 'free';
   if (!isDemo) {
-    // Dynamic import to avoid loading better-sqlite3 on Vercel serverless
-    const { extractBearerToken, checkAndIncrementUsage } = await import('@/lib/usage');
-    
-    const authHeader = request.headers.get('Authorization');
-    const token = extractBearerToken(authHeader);
-
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Missing Authorization header. Use: Authorization: Bearer <api_key>' },
-        { status: 401 }
-      );
-    }
-
-    const authResult = checkAndIncrementUsage(token);
-    if (!authResult.ok) {
-      return NextResponse.json(
-        { error: authResult.error },
-        { status: authResult.status }
-      );
-    }
-    plan = authResult.apiKey!.plan;
+    // Auth requires DB — not available on edge runtime
+    // TODO: Replace with Vercel KV or external DB for production auth
+    return NextResponse.json(
+      { error: 'Authenticated API requires server runtime. Use ?demo=1 for preview or self-host for full auth.' },
+      { status: 501 }
+    );
   }
 
   // Parse params (from body or query string)
