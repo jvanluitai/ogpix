@@ -73,14 +73,26 @@ function HomeContent() {
 
   useEffect(() => {
     const templateParam = searchParams.get('template');
+    const shouldScroll = templateParam || window.location.hash === '#demo';
+
     if (templateParam && TEMPLATES.includes(templateParam as Template)) {
       setDemoTemplate(templateParam as Template);
-      setTimeout(() => {
+    }
+
+    if (shouldScroll) {
+      const scrollToDemo = () => {
         document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+      };
+
+      // Double rAF ensures the browser has painted after any state updates,
+      // then a small timeout gives layout time to stabilize.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(scrollToDemo, 300);
+        });
+      });
     }
   }, [searchParams]);
-
   const previewUrl =
     `/api/generate?template=${demoTemplate}` +
     `&title=${encodeURIComponent(demoTitle)}` +
